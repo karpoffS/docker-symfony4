@@ -1,4 +1,4 @@
-# Smartbox Docker для проектов на Symfony 4
+# Стек Docker для проектов на Symfony 4
 
 ## Что входит в комплект
 

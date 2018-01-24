@@ -1,0 +1,52 @@
+version: '2'
+
+services:
+    mysqldb:
+        restart: always
+        container_name: container_mysql
+        image: mysql
+        volumes:
+            - "./data/db:/var/lib/mysql"
+        environment:
+            MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+            MYSQL_DATABASE: ${MYSQL_DATABASE}
+            MYSQL_USER: ${MYSQL_USER}
+            MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+        ports:
+            - ${MYSQL_PORT}:3306
+    php:
+        restart: always
+        container_name: container_phpfpm
+        build:
+            context: docker/php7-fpm/${APP_ENV}
+            args:
+                TIMEZONE: ${TIMEZONE}
+        ports:
+           - "9000:9000"
+        volumes:
+            - ./docker/etc/php/:/etc/php
+            - ${SYMFONY_APP_PATH}:/var/www/symfony
+#            - ./var/log:/var/www/symfony/var/log
+    nginx:
+        restart: always
+        container_name: container_nginx
+        build:
+            context: docker/nginx
+            args:
+                MAX_EXECUTION_TIME: ${MAX_EXECUTION_TIME}
+        ports:
+           - "${NGINX_PORT}:80"
+        volumes_from:
+            - php
+        volumes:
+#            - ./docker/etc/nginx/:/etc/nginx
+            - ./logs/nginx/:/var/log/nginx
+    pma:
+        container_name: container_phpmyadmin
+        image: phpmyadmin/phpmyadmin
+        ports:
+            - "8080:80"
+        volumes_from:
+            - php
+        links:
+            - mysqldb:db

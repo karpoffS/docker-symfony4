@@ -1,0 +1,11 @@
+.idea
+/logs
+/data
+.env
+
+###> symfony/framework-bundle ###
+.env
+/public/bundles/
+/var/*
+/vendor/
+###< symfony/framework-bundle ###
